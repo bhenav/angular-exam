@@ -2,7 +2,7 @@ import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { ForgotPasswordComponent } from './containers/forgot-password/forgot-password.component';
 import { LoginComponent } from './containers/login/login.component';
-import { RegisterComponent } from './containers/register/register.component';
+import { SignUpComponent } from './containers/sign-up/sign-up.component';
 import { AuthGuard } from './guards/auth/auth.guard';
 
 const routes: Routes = [
@@ -19,8 +19,8 @@ const routes: Routes = [
         component: LoginComponent,
       },
       {
-        path: 'register',
-        component: RegisterComponent,
+        path: 'sign-up',
+        component: SignUpComponent,
       },
       {
         path: 'forgot-password',

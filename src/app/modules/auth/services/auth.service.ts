@@ -7,6 +7,7 @@ import { BaseService } from '../../../services/base.service';
 import { AuthState } from '../models/auth-state.model';
 import { ForgotPassword } from '../models/forgot-password.model';
 import { Login } from '../models/login.model';
+import { SignUp } from '../models/sign-up.model';
 import { TokenResponse } from '../models/token-response.model';
 
 const initialState: AuthState = <AuthState>{};
@@ -26,6 +27,16 @@ export class AuthService extends BaseService<AuthState> {
 
   login(model: Login, options = { headers: this.headers }): Observable<TokenResponse> {
     return this.http.post<TokenResponse>(`${this.path}/login`, model, { ...options })
+      .pipe(
+        tap(tokenResponse => {
+          this.setAccessToken(tokenResponse.accessToken);
+          this.setRefreshToken(tokenResponse.refreshToken);
+        }),
+      );
+  }
+
+  signUp(model: SignUp, options = { headers: this.headers }): Observable<TokenResponse> {
+    return this.http.post<TokenResponse>(`${this.path}/sign-up`, model, { ...options })
       .pipe(
         tap(tokenResponse => {
           this.setAccessToken(tokenResponse.accessToken);

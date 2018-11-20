@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { ActivatedRouteSnapshot, CanActivate, CanActivateChild, RouterStateSnapshot } from '@angular/router';
 import { Observable } from 'rxjs';
-import { filter, tap } from 'rxjs/operators';
+import { tap } from 'rxjs/operators';
 import { AuthService } from '../../auth/services/auth.service';
 
 @Injectable({
@@ -23,11 +23,10 @@ export class DashboardGuard implements CanActivate, CanActivateChild {
           this.authService.redirectLogin();
         }
       }),
-      filter((status) => status),
     );
   }
 
   canActivateChild(childRoute: ActivatedRouteSnapshot, state: RouterStateSnapshot): Observable<boolean> | Promise<boolean> | boolean {
-    return false;
+    return true;
   }
 }

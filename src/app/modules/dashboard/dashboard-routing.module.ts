@@ -17,7 +17,10 @@ const routes: Routes = [
       {
         path: 'index',
         component: IndexComponent,
-        canActivateChild: DashboardGuard,
+      },
+      {
+        path: 'index2',
+        component: IndexComponent,
       },
     ],
   },
