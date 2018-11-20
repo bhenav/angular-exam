@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { DashboardService } from '../../../dashboard/services/dashboard.service';
 import { AuthState } from '../../models/auth-state.model';
 import { Login } from '../../models/login.model';
 import { AuthService } from '../../services/auth.service';
@@ -12,6 +13,7 @@ export class LoginComponent implements OnInit {
 
   constructor(
     private readonly authService: AuthService,
+    private readonly dashboardService: DashboardService,
   ) {
   }
 
@@ -20,6 +22,7 @@ export class LoginComponent implements OnInit {
 
   onSubmit(model: Login) {
     this.authService.login(model).subscribe(() => {
+      this.dashboardService.redirectIndex();
     });
   }
 

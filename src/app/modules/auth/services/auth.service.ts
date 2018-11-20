@@ -1,13 +1,13 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
-import { Observable, of } from 'rxjs';
+import { Observable, of, throwError } from 'rxjs';
 import { catchError, map, tap } from 'rxjs/operators';
 import { BaseService } from '../../../services/base.service';
 import { AuthState } from '../models/auth-state.model';
 import { ForgotPassword } from '../models/forgot-password.model';
-import { LoginResponse } from '../models/login-response.model';
 import { Login } from '../models/login.model';
+import { TokenResponse } from '../models/token-response.model';
 
 const initialState: AuthState = <AuthState>{};
 
@@ -24,10 +24,13 @@ export class AuthService extends BaseService<AuthState> {
     super(http, initialState);
   }
 
-  login(model: Login, options = { headers: this.headers }): Observable<LoginResponse> {
-    return this.http.post<LoginResponse>(`${this.path}/login`, model, { ...options })
+  login(model: Login, options = { headers: this.headers }): Observable<TokenResponse> {
+    return this.http.post<TokenResponse>(`${this.path}/login`, model, { ...options })
       .pipe(
-        tap(loginResponse => this.setToken(loginResponse.token)),
+        tap(tokenResponse => {
+          this.setAccessToken(tokenResponse.accessToken);
+          this.setRefreshToken(tokenResponse.refreshToken);
+        }),
       );
   }
 
@@ -43,19 +46,52 @@ export class AuthService extends BaseService<AuthState> {
       );
   }
 
+  resfreshToken(refreshToken = this.getRefreshToken(), options = { headers: this.headers }): Observable<TokenResponse> {
+    this.removeRefreshToken();
+    if (!refreshToken) {
+      return throwError('Not found Refresh Token');
+    }
+    return this.http.post<TokenResponse>(
+      `${this.path}/refresh`,
+      { refreshToken: refreshToken },
+      { ...options },
+    ).pipe(
+      tap(tokenResponse => {
+        this.setAccessToken(tokenResponse.accessToken);
+        this.setRefreshToken(tokenResponse.refreshToken);
+      }),
+    );
+  }
+
   // region Token
-  // noinspection JSMethodCanBeStatic
-  setToken(token): boolean {
+  setAccessToken(token): boolean {
     localStorage.setItem('access_token', btoa(token));
     return true;
   }
 
-  getToken(): string {
+  getAccessToken(): string {
     return atob(localStorage.getItem('access_token'));
   }
 
-  removeToken(): boolean {
+  removeAccessToken(): boolean {
     localStorage.removeItem('access_token');
+    return true;
+  }
+
+  setRefreshToken(token): boolean {
+    localStorage.setItem('refresh_token', btoa(token));
+    return true;
+  }
+
+  getRefreshToken(): string {
+    if (!localStorage.getItem('refresh_token')) {
+      return undefined;
+    }
+    return atob(localStorage.getItem('refresh_token'));
+  }
+
+  removeRefreshToken(): boolean {
+    localStorage.removeItem('refresh_token');
     return true;
   }
 
