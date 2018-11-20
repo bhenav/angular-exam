@@ -1,29 +1,27 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
-import { Observable } from 'rxjs';
-import { tap } from 'rxjs/operators';
+import { Observable, of } from 'rxjs';
+import { catchError, map, tap } from 'rxjs/operators';
 import { BaseService } from '../../../services/base.service';
 import { AuthState } from '../models/auth-state.model';
 import { ForgotPassword } from '../models/forgot-password.model';
 import { LoginResponse } from '../models/login-response.model';
 import { Login } from '../models/login.model';
 
+const initialState: AuthState = <AuthState>{};
+
 @Injectable({
   providedIn: 'root',
 })
 export class AuthService extends BaseService<AuthState> {
   path = `${this.API_PREFIX}/authentication`;
-  public initialState: AuthState = <AuthState>{
-    user: {},
-  };
 
   constructor(
     public readonly http: HttpClient,
     public readonly router: Router,
   ) {
-    super(http);
-    this.updateState(this.initialState);
+    super(http, initialState);
   }
 
   login(model: Login, options = { headers: this.headers }): Observable<LoginResponse> {
@@ -35,6 +33,14 @@ export class AuthService extends BaseService<AuthState> {
 
   forgotPassword(model: ForgotPassword, options = { headers: this.headers }): Observable<any> {
     return this.http.post<any>(`${this.path}/forgot-password`, model, { ...options });
+  }
+
+  checkAuthentication(options = { headers: this.headers }): Observable<boolean> {
+    return this.http.post<boolean>(`${this.path}/check`, { ...options })
+      .pipe(
+        map(() => true),
+        catchError(() => of(false)),
+      );
   }
 
   // region Token

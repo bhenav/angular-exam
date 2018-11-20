@@ -1,4 +1,5 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http';
+import * as _ from 'lodash';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { BaseState } from '../models/base-state.model';
 
@@ -10,8 +11,8 @@ export abstract class BaseService<State extends BaseState> {
   // endregion
 
   // region State
-  public initialState: State;
   public state$: BehaviorSubject<State> = new BehaviorSubject<State>(null);
+  public initialState: State;
   // endregion
 
   headers = new HttpHeaders().set('Content-Type', 'application/json');
@@ -19,7 +20,10 @@ export abstract class BaseService<State extends BaseState> {
 
   constructor(
     public readonly http: HttpClient,
+    initialState: State,
   ) {
+    this.initialState = initialState;
+    this.updateState();
   }
 
   post<T>(model: T, options = { headers: this.headers }): Observable<T> {
@@ -63,6 +67,6 @@ export abstract class BaseService<State extends BaseState> {
   }
 
   updateState(state: State = this.initialState) {
-    this.state$.next(<State>{ ...this.initialState, ...state });
+    this.state$.next(_.assign({}, this.initialState, state) as State);
   }
 }

@@ -3,24 +3,31 @@ import { RouterModule, Routes } from '@angular/router';
 import { ForgotPasswordComponent } from './containers/forgot-password/forgot-password.component';
 import { LoginComponent } from './containers/login/login.component';
 import { RegisterComponent } from './containers/register/register.component';
+import { AuthGuard } from './guards/auth/auth.guard';
 
 const routes: Routes = [
   {
     path: '',
-    redirectTo: 'login',
-  },
-  {
-    path: 'login',
-    component: LoginComponent,
-  },
-  {
-    path: 'register',
-    component: RegisterComponent,
-  },
-  {
-    path: 'forgot-password',
-    component: ForgotPasswordComponent,
-  },
+    canActivate: [AuthGuard],
+    children: [
+      {
+        path: '',
+        redirectTo: 'login',
+      },
+      {
+        path: 'login',
+        component: LoginComponent,
+      },
+      {
+        path: 'register',
+        component: RegisterComponent,
+      },
+      {
+        path: 'forgot-password',
+        component: ForgotPasswordComponent,
+      },
+    ],
+  }
 ];
 
 @NgModule({
