@@ -1,0 +1,23 @@
+@import "variables"
+
+.left-side, .right-side
+  overflow: auto
+
+.left-side
+  max-width: 110px
+  transition: max-width 300ms
+  &.open
+    max-width: 350px
+
+
+.logo
+  height: $dashboard-header-height
+  position: sticky
+  top: 0
+  z-index: 1
+
+  img
+    max-width: 100%
+    max-height: $dashboard-header-height
+    width: 60px
+

@@ -3,6 +3,7 @@ import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
+import { TranslateModule } from '@ngx-translate/core';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './containers/app.container/app.component';
 import { TokenInterceptor } from './interceptors/token-interceptor';
@@ -16,6 +17,7 @@ import { TokenInterceptor } from './interceptors/token-interceptor';
     AppRoutingModule,
     BrowserAnimationsModule,
     HttpClientModule,
+    TranslateModule.forRoot(),
   ],
   providers: [
     {

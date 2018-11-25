@@ -1,7 +1,7 @@
 import { HttpErrorResponse, HttpEvent, HttpHandler, HttpInterceptor, HttpRequest } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable, throwError } from 'rxjs';
-import { catchError, exhaustMap, tap } from 'rxjs/operators';
+import { catchError, exhaustMap } from 'rxjs/operators';
 import { AuthService } from '../modules/auth/services/auth.service';
 
 @Injectable()
@@ -13,12 +13,7 @@ export class TokenInterceptor implements HttpInterceptor {
 
   intercept(request: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
     return next.handle(this.getRequestClone(request)).pipe(
-      tap(event => {
-        console.log('event', event);
-      }),
       catchError(error => {
-        console.log('err', error);
-
         if (error instanceof HttpErrorResponse) {
           if (error.status === 401 && !!this.authService.getRefreshToken()) {
             this.authService.removeAccessToken();
@@ -48,7 +43,7 @@ export class TokenInterceptor implements HttpInterceptor {
     const updateOptions: any = {};
     if (this.authService.getAccessToken()) {
       updateOptions.setHeaders = {
-        Authorization: `Bearer ${this.authService.getAccessToken()}`,
+        Authorization: `Bearer ${ this.authService.getAccessToken() }`,
       };
     }
     return request.clone(updateOptions);

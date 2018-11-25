@@ -1,0 +1,47 @@
+<ng-container *ngTemplateOutlet="renderNav; context: {items: navs, itemClasses: 'px-0'}"></ng-container>
+<ng-template #renderNav let-items="items" let-itemClasses="itemClasses">
+  <div class="items list-group mb-0">
+    <div
+      class="list-group-item bg-transparent border-0 pr-0 py-2 {{ itemClasses }}"
+      *ngFor="let item of items"
+      examDashboardNavToggle
+      #parentLink="examDashboardNavToggle"
+    >
+      <a
+        (click)="onClickNav(item, parentLink)"
+        class="d-flex justify-content-between align-items-center"
+        [ngClass]="{
+          'font-weight-bold': !!item.children && item.children.length > 0,
+          'cursor-pointer': !!item.children && item.children.length > 0
+        }"
+        [routerLink]="item.path"
+        [title]="item.title"
+      >
+        <i
+          class="item-icon p-2 rounded text-center icon-{{ item.icon ? item.icon : 'corner-down-right' }}"
+          [ngClass]="{
+            'm-auto item-icon-big p-3': navStatus === DashboardNavStatus.CLOSE,
+            'mr-3': navStatus !== DashboardNavStatus.CLOSE
+          }"
+        ></i>
+        <span class="w-100" *ngIf="navStatus !== DashboardNavStatus.CLOSE">
+          {{item.title}}
+        </span>
+        <i
+          *ngIf="navStatus !== DashboardNavStatus.CLOSE"
+          [ngClass]="{
+              'icon-arrow-right': item.path,
+              'icon-Lock': !item.path,
+              'icon-chevron-up': !!item.children && item.children.length > 0 && parentLink.status,
+              'icon-chevron-down': !!item.children && item.children.length > 0 && !parentLink.status
+            }"></i>
+      </a>
+      <div
+        [@subItems]
+        class="sub-items py-3"
+        *ngIf="parentLink.status && item.children && item.children.length > 0 && navStatus !== DashboardNavStatus.CLOSE">
+        <ng-container *ngTemplateOutlet="renderNav; context: {items: item.children}"></ng-container>
+      </div>
+    </div>
+  </div>
+</ng-template>

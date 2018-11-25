@@ -1,0 +1,21 @@
+<div class="row bg-white m-0 h-100 d-flex justify-content-between">
+  <div class="col pl-4 d-flex align-items-center">
+    <i class="menu-button icon-menu d-none d-md-inline-block" (click)="onClickMenuButton(DashboardNavStatus.LEFT)"></i>
+    <i class="menu-button icon-menu d-md-none" (click)="onClickMenuButton(DashboardNavStatus.MOBILE)"></i>
+  </div>
+  <div class="col d-md-none px-0">
+    <ng-container *ngTemplateOutlet="logo"></ng-container>
+  </div>
+  <div class="col pr-4 d-flex align-items-center">
+    <button class="btn btn-danger ml-auto"><i class="icon-power-off"></i></button>
+  </div>
+</div>
+
+
+<ng-template #logo>
+  <div class="logo text-center d-flex align-items-center">
+    <a routerLink="/" class="m-auto d-block w-100">
+      <img src="/assets/angular.svg" alt="Angular 7 Exam" title="Angular 7 Exam">
+    </a>
+  </div>
+</ng-template>

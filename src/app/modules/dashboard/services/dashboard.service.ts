@@ -2,15 +2,18 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
 import { BaseService } from '../../../services/base.service';
+import { DashboardNavStatus } from '../enums/dashboard-nav-status.enum';
 import { DashboardState } from '../models/dashboard-state.model';
 
-const initialState: DashboardState = <DashboardState>{};
+const initialState: DashboardState = <DashboardState>{
+  navStatus: DashboardNavStatus.CLOSE,
+};
 
 @Injectable({
   providedIn: 'root',
 })
 export class DashboardService extends BaseService<DashboardState> {
-  path = `${this.API_PREFIX}/dashboard`;
+  path = `${ this.API_PREFIX }/dashboard`;
 
   constructor(
     public readonly http: HttpClient,
@@ -21,5 +24,12 @@ export class DashboardService extends BaseService<DashboardState> {
 
   redirectIndex() {
     this.router.navigate([ 'dashboard', 'index' ]);
+  }
+
+
+  updateDashboardNavStatus(dashboardNavStatus: DashboardNavStatus) {
+    this.updateState(<DashboardState>{
+      navStatus: dashboardNavStatus,
+    });
   }
 }
