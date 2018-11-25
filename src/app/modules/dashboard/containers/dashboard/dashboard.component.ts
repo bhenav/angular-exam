@@ -1,5 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { BaseComponent } from '../../../../components/base.component';
+import { BaseService } from '../../../../services/base.service';
+import { AuthService } from '../../../auth/services/auth.service';
 import { DashboardNavStatus } from '../../enums/dashboard-nav-status.enum';
 import { DashboardNav } from '../../models/dashboard-nav.model';
 import { DashboardState } from '../../models/dashboard-state.model';
@@ -16,6 +18,7 @@ export class DashboardComponent implements OnInit, BaseComponent<DashboardState,
 
   constructor(
     private readonly dashboardService: DashboardService,
+    private readonly authService: AuthService,
   ) {
   }
 
@@ -39,6 +42,13 @@ export class DashboardComponent implements OnInit, BaseComponent<DashboardState,
     } else {
       this.service().updateDashboardNavStatus(DashboardNavStatus.CLOSE);
     }
+  }
+
+  onLogout() {
+    this.authService.logout().subscribe(() => {
+      this.authService.redirectLogin();
+      BaseService.resetAllState();
+    });
   }
 
   state(): DashboardState {

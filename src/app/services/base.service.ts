@@ -1,9 +1,13 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { OnDestroy } from '@angular/core';
 import * as _ from 'lodash';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { BaseState } from '../models/base-state.model';
 
-export abstract class BaseService<State extends BaseState> {
+let classes: any[] = [];
+
+export abstract class BaseService<State extends BaseState> implements OnDestroy {
+  SERVICE_ID: number;
 
   // region Source
   public API_PREFIX = '/api';
@@ -18,12 +22,35 @@ export abstract class BaseService<State extends BaseState> {
   headers = new HttpHeaders().set('Content-Type', 'application/json');
 
 
-  constructor(
+  protected constructor(
     public readonly http: HttpClient,
     initialState: State,
+    options: {
+      localStorage?: boolean;
+    } = {
+      localStorage: true,
+    },
   ) {
     this.initialState = initialState;
-    this.updateState();
+    if (options.localStorage) {
+      this.dispatch(this.getStateInLocalStorage() || this.initialState);
+      this.state$.subscribe(state => this.setStateInLocalStorage(state));
+    } else {
+      this.dispatch();
+    }
+    classes.push(this);
+    this.SERVICE_ID = Math.round(Math.random() * 23535634534);
+  }
+
+  public get className(): string[] {
+    const obj = Object.getPrototypeOf(this);
+    return obj.constructor.name;
+  }
+
+  static resetAllState() {
+    classes.forEach(item => {
+      item.dispatch(item.initialState);
+    });
   }
 
   post<T>(model: T, options = { headers: this.headers }): Observable<T> {
@@ -31,19 +58,19 @@ export abstract class BaseService<State extends BaseState> {
   }
 
   all<T>(options = { headers: this.headers }): Observable<T[]> {
-    return this.http.get<T[]>(`${this.path}`, options);
+    return this.http.get<T[]>(`${ this.path }`, options);
   }
 
   del<T>(id: string, options = { headers: this.headers }): Observable<T> {
-    return this.http.delete<T>(`${this.path}/${id}`, options);
+    return this.http.delete<T>(`${ this.path }/${ id }`, options);
   }
 
   one<T>(id: string, options = { headers: this.headers }): Observable<T> {
-    return this.http.get<T>(`${this.path}/${id}`, options);
+    return this.http.get<T>(`${ this.path }/${ id }`, options);
   }
 
   put<T>(id: string, model: T, options = { headers: this.headers }): Observable<T> {
-    return this.http.put<T>(`${this.path}/${id}`, JSON.stringify(model), options);
+    return this.http.put<T>(`${ this.path }/${ id }`, JSON.stringify(model), options);
   }
 
   pureGet<T>(url: string, options = { headers: this.headers }): Observable<T> {
@@ -66,7 +93,31 @@ export abstract class BaseService<State extends BaseState> {
     return this.http.delete<T>(url, options);
   }
 
-  updateState(state: State = this.initialState) {
-    this.state$.next(_.assign({}, this.initialState, state) as State);
+  dispatch(state: State = this.initialState) {
+    this.state$.next(_.assign({}, this.state$.value, state) as State);
   }
+
+  setStateInLocalStorage(state): boolean {
+    localStorage.setItem(this.className.toString(), btoa(JSON.stringify(state)));
+    return true;
+  }
+
+  getStateInLocalStorage(): State | undefined {
+    if (!localStorage.getItem(this.className.toString())) {
+      return undefined;
+    }
+    return JSON.parse(atob(localStorage.getItem(this.className.toString()))) as State;
+  }
+
+  removeStateInLocalStorage(): boolean {
+    localStorage.removeItem(this.className.toString());
+    return true;
+  }
+
+  ngOnDestroy(): void {
+    classes = classes.filter(item => this.SERVICE_ID !== item.SERVICE_ID);
+    this.onDestroy();
+  }
+
+  onDestroy?(): void;
 }

@@ -2,6 +2,7 @@ import { HttpErrorResponse, HttpEvent, HttpHandler, HttpInterceptor, HttpRequest
 import { Injectable } from '@angular/core';
 import { Observable, throwError } from 'rxjs';
 import { catchError, exhaustMap } from 'rxjs/operators';
+import { AuthState } from '../modules/auth/models/auth-state.model';
 import { AuthService } from '../modules/auth/services/auth.service';
 
 @Injectable()
@@ -15,9 +16,12 @@ export class TokenInterceptor implements HttpInterceptor {
     return next.handle(this.getRequestClone(request)).pipe(
       catchError(error => {
         if (error instanceof HttpErrorResponse) {
-          if (error.status === 401 && !!this.authService.getRefreshToken()) {
-            this.authService.removeAccessToken();
-            return this.authService.resfreshToken().pipe(
+          const authState = this.authService.state$.value;
+          if (error.status === 401 && !!authState.refreshToken) {
+            this.authService.dispatch(<AuthState>{
+              accessToken: null,
+            });
+            return this.authService.refreshToken().pipe(
               exhaustMap(() => {
                 return next.handle(this.getRequestClone(request)).pipe(
                   catchError(err => {
@@ -27,7 +31,6 @@ export class TokenInterceptor implements HttpInterceptor {
                 );
               }),
               catchError(err => {
-                this.authService.removeRefreshToken();
                 this.authService.redirectLogin();
                 return throwError(err);
               }),
@@ -41,9 +44,10 @@ export class TokenInterceptor implements HttpInterceptor {
 
   getRequestClone(request: HttpRequest<any>) {
     const updateOptions: any = {};
-    if (this.authService.getAccessToken()) {
+    const authState = this.authService.state$.value;
+    if (authState.accessToken) {
       updateOptions.setHeaders = {
-        Authorization: `Bearer ${ this.authService.getAccessToken() }`,
+        Authorization: `Bearer ${ authState.accessToken }`,
       };
     }
     return request.clone(updateOptions);

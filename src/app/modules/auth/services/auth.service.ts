@@ -16,7 +16,7 @@ const initialState: AuthState = <AuthState>{};
   providedIn: 'root',
 })
 export class AuthService extends BaseService<AuthState> {
-  path = `${this.API_PREFIX}/authentication`;
+  path = `${ this.API_PREFIX }/authentication`;
 
   constructor(
     public readonly http: HttpClient,
@@ -26,90 +26,74 @@ export class AuthService extends BaseService<AuthState> {
   }
 
   login(model: Login, options = { headers: this.headers }): Observable<TokenResponse> {
-    return this.http.post<TokenResponse>(`${this.path}/login`, model, { ...options })
+    return this.http.post<TokenResponse>(`${ this.path }/login`, model, { ...options })
       .pipe(
         tap(tokenResponse => {
-          this.setAccessToken(tokenResponse.accessToken);
-          this.setRefreshToken(tokenResponse.refreshToken);
+          this.dispatch(<AuthState>{
+            refreshToken: tokenResponse.refreshToken,
+            accessToken: tokenResponse.accessToken,
+          });
+        }),
+      );
+  }
+
+
+  logout(options = { headers: this.headers }): Observable<TokenResponse> {
+    return this.http.post<TokenResponse>(`${ this.path }/logout`, {}, { ...options })
+      .pipe(
+        tap(() => {
+          this.dispatch(<AuthState>{
+            refreshToken: null,
+            accessToken: null,
+          });
         }),
       );
   }
 
   signUp(model: SignUp, options = { headers: this.headers }): Observable<TokenResponse> {
-    return this.http.post<TokenResponse>(`${this.path}/sign-up`, model, { ...options })
+    return this.http.post<TokenResponse>(`${ this.path }/sign-up`, model, { ...options })
       .pipe(
         tap(tokenResponse => {
-          this.setAccessToken(tokenResponse.accessToken);
-          this.setRefreshToken(tokenResponse.refreshToken);
+          this.dispatch(<AuthState>{
+            refreshToken: tokenResponse.refreshToken,
+            accessToken: tokenResponse.accessToken,
+          });
         }),
       );
   }
 
   forgotPassword(model: ForgotPassword, options = { headers: this.headers }): Observable<any> {
-    return this.http.post<any>(`${this.path}/forgot-password`, model, { ...options });
+    return this.http.post<any>(`${ this.path }/forgot-password`, model, { ...options });
   }
 
   checkAuthentication(options = { headers: this.headers }): Observable<boolean> {
-    return this.http.post<boolean>(`${this.path}/check`, { ...options })
+    return this.http.post<boolean>(`${ this.path }/check`, { ...options })
       .pipe(
         map(() => true),
         catchError(() => of(false)),
       );
   }
 
-  resfreshToken(refreshToken = this.getRefreshToken(), options = { headers: this.headers }): Observable<TokenResponse> {
-    this.removeRefreshToken();
+  refreshToken(refreshToken = this.state$.value.refreshToken, options = { headers: this.headers }): Observable<TokenResponse> {
+    this.dispatch(<AuthState>{
+      refreshToken: null,
+    });
     if (!refreshToken) {
       return throwError('Not found Refresh Token');
     }
     return this.http.post<TokenResponse>(
-      `${this.path}/refresh`,
+      `${ this.path }/refresh`,
       { refreshToken: refreshToken },
       { ...options },
     ).pipe(
       tap(tokenResponse => {
-        this.setAccessToken(tokenResponse.accessToken);
-        this.setRefreshToken(tokenResponse.refreshToken);
+        this.dispatch(<AuthState>{
+          refreshToken: tokenResponse.refreshToken,
+          accessToken: tokenResponse.accessToken,
+        });
       }),
     );
   }
-
-  // region Token
-  setAccessToken(token): boolean {
-    localStorage.setItem('access_token', btoa(token));
-    return true;
-  }
-
-  getAccessToken(): string {
-    if (!localStorage.getItem('access_token')) {
-      return undefined;
-    }
-    return atob(localStorage.getItem('access_token'));
-  }
-
-  removeAccessToken(): boolean {
-    localStorage.removeItem('access_token');
-    return true;
-  }
-
-  setRefreshToken(token): boolean {
-    localStorage.setItem('refresh_token', btoa(token));
-    return true;
-  }
-
-  getRefreshToken(): string {
-    if (!localStorage.getItem('refresh_token')) {
-      return undefined;
-    }
-    return atob(localStorage.getItem('refresh_token'));
-  }
-
-  removeRefreshToken(): boolean {
-    localStorage.removeItem('refresh_token');
-    return true;
-  }
-
-  // endregion
 
   // region Redirect
   redirectLogin() {

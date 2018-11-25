@@ -11,6 +11,8 @@ export class DashboardHeaderComponent implements OnInit {
 
   @Output()
   clickMenuButton: EventEmitter<DashboardNavStatus> = new EventEmitter<DashboardNavStatus>();
+  @Output()
+  logout: EventEmitter<any> = new EventEmitter<any>();
 
   constructor() {
   }
@@ -20,5 +22,9 @@ export class DashboardHeaderComponent implements OnInit {
 
   onClickMenuButton(dashboardNavStatus: DashboardNavStatus) {
     this.clickMenuButton.emit(dashboardNavStatus);
+  }
+
+  onLogout() {
+    this.logout.emit();
   }
 }

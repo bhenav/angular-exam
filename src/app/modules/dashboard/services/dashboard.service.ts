@@ -9,6 +9,7 @@ import { DashboardState } from '../models/dashboard-state.model';
 
 
 const initialState: DashboardState = <DashboardState>{
+  navStatus: DashboardNavStatus.CLOSE,
 };
 
 @Injectable({
@@ -22,27 +23,8 @@ export class DashboardService extends BaseService<DashboardState> {
     public readonly router: Router,
   ) {
     super(http, initialState);
-    this.updateState(<DashboardState>{
-      navStatus: DashboardService.getNavStatus() || DashboardNavStatus.CLOSE,
-    });
   }
 
-  static setNavStatus(status): boolean {
-    localStorage.setItem('navStatus', btoa(status));
-    return true;
-  }
-
-  static getNavStatus(): DashboardNavStatus {
-    if (!localStorage.getItem('navStatus')) {
-      return undefined;
-    }
-    return atob(localStorage.getItem('navStatus')) as DashboardNavStatus;
-  }
-
-  static removeNavStatus(): boolean {
-    localStorage.removeItem('navStatus');
-    return true;
-  }
 
   redirectIndex() {
     this.router.navigate([ 'dashboard', 'index' ]);
@@ -50,10 +32,9 @@ export class DashboardService extends BaseService<DashboardState> {
 
 
   updateDashboardNavStatus(dashboardNavStatus: DashboardNavStatus) {
-    this.updateState(<DashboardState>{
+    this.dispatch(<DashboardState>{
       navStatus: dashboardNavStatus,
     });
-    DashboardService.setNavStatus(dashboardNavStatus);
   }
 
   getNav(): Observable<DashboardNav[]> {

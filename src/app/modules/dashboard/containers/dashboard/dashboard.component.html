@@ -11,7 +11,7 @@
   </div>
   <div class="p-0 col-12 col-md"
   >
-    <exam-dashboard-header (clickMenuButton)="onClickMenuButton($event)"></exam-dashboard-header>
+    <exam-dashboard-header (logout)="onLogout()" (clickMenuButton)="onClickMenuButton($event)"></exam-dashboard-header>
     <div class="content p-3">
       <router-outlet></router-outlet>
     </div>
