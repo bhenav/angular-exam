@@ -81,6 +81,9 @@ export class AuthService extends BaseService<AuthState> {
   }
 
   getAccessToken(): string {
+    if (!localStorage.getItem('access_token')) {
+      return undefined;
+    }
     return atob(localStorage.getItem('access_token'));
   }
 

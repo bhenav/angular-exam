@@ -12,29 +12,7 @@ import { DashboardService } from '../../services/dashboard.service';
 })
 export class DashboardComponent implements OnInit, BaseComponent<DashboardState, DashboardService> {
   DashboardNavStatus = DashboardNavStatus;
-  navs: DashboardNav[] = [
-    <DashboardNav>{ id: 11, title: 'test 1' },
-    <DashboardNav>{ id: 12, title: 'test 2', path: '/' },
-    <DashboardNav>{
-      id: 13,
-      title: 'test 3',
-      icon: 'shopping-cart',
-      children: [
-        <DashboardNav>{ id: 31, title: 'test sub 1' },
-        <DashboardNav>{ id: 32, title: 'test sub 2' },
-        <DashboardNav>{ id: 33, title: 'test sub 3' },
-      ],
-    },
-    <DashboardNav>{
-      id: 14,
-      title: 'test 4',
-      children: [
-        <DashboardNav>{ id: 41, title: 'test sub 1' },
-        <DashboardNav>{ id: 42, title: 'test sub 2' },
-        <DashboardNav>{ id: 43, title: 'test sub 3' },
-      ],
-    },
-  ];
+  navs: DashboardNav[] = [];
 
   constructor(
     private readonly dashboardService: DashboardService,
@@ -42,6 +20,11 @@ export class DashboardComponent implements OnInit, BaseComponent<DashboardState,
   }
 
   ngOnInit() {
+    this.getNav();
+  }
+
+  getNav(): void {
+    this.service().getNav().subscribe(navs => this.navs = navs);
   }
 
   onClickNav(item: DashboardNav) {
