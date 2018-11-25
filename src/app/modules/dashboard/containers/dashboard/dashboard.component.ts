@@ -52,7 +52,7 @@ export class DashboardComponent implements OnInit, BaseComponent<DashboardState,
   }
 
   state(): DashboardState {
-    return this.dashboardService.state$.value;
+    return this.service().state$.value;
   }
 
   service(): DashboardService {

@@ -10,7 +10,10 @@ import { Login } from '../models/login.model';
 import { SignUp } from '../models/sign-up.model';
 import { TokenResponse } from '../models/token-response.model';
 
-const initialState: AuthState = <AuthState>{};
+const initialState: AuthState = <AuthState>{
+  accessToken: null,
+  refreshToken: null,
+};
 
 @Injectable({
   providedIn: 'root',
@@ -32,11 +35,11 @@ export class AuthService extends BaseService<AuthState> {
           this.dispatch(<AuthState>{
             refreshToken: tokenResponse.refreshToken,
             accessToken: tokenResponse.accessToken,
+            message: 'login',
           });
         }),
       );
   }
-
 
   logout(options = { headers: this.headers }): Observable<TokenResponse> {
     return this.http.post<TokenResponse>(`${ this.path }/logout`, {}, { ...options })

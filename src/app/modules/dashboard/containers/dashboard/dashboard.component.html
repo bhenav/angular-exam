@@ -1,5 +1,5 @@
 <div class="row m-0 h-100">
-  <div class="p-0 col-12 d-none d-md-block col-md left-side px-3 px-lg-4 bg-white"
+  <div class="p-0 col-12 d-none d-md-block col-md left-side px-3 px-lg-4 bg-white shadow-sm"
     [ngClass]="{
       'open': state().navStatus !== DashboardNavStatus.CLOSE
     }"
@@ -11,7 +11,7 @@
   </div>
   <div class="p-0 col-12 col-md"
   >
-    <exam-dashboard-header (logout)="onLogout()" (clickMenuButton)="onClickMenuButton($event)"></exam-dashboard-header>
+    <exam-dashboard-header class="shadow-sm" (logout)="onLogout()" (clickMenuButton)="onClickMenuButton($event)"></exam-dashboard-header>
     <div class="content p-3">
       <router-outlet></router-outlet>
     </div>

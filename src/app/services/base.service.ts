@@ -1,40 +1,43 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { OnDestroy } from '@angular/core';
 import * as _ from 'lodash';
-import { BehaviorSubject, Observable } from 'rxjs';
+import { BehaviorSubject, Observable, Subscription } from 'rxjs';
 import { BaseState } from '../models/base-state.model';
 
 let classes: any[] = [];
 
-export abstract class BaseService<State extends BaseState> implements OnDestroy {
-  SERVICE_ID: number;
+export interface BaseServiceOptions {
+  localStorage?: boolean;
+}
 
+export abstract class BaseService<State extends BaseState> implements OnDestroy {
   // region Source
   public API_PREFIX = '/api';
   public abstract path: string;
-  // endregion
+  headers = new HttpHeaders().set('Content-Type', 'application/json');
+  // #endregion
 
   // region State
   public state$: BehaviorSubject<State> = new BehaviorSubject<State>(null);
   public initialState: State;
-  // endregion
+  stateSubscribe: Subscription;
+  // #endregion
 
-  headers = new HttpHeaders().set('Content-Type', 'application/json');
-
+  SERVICE_ID: number;
+  options: BaseServiceOptions;
 
   protected constructor(
     public readonly http: HttpClient,
     initialState: State,
-    options: {
-      localStorage?: boolean;
-    } = {
+    options: BaseServiceOptions = <BaseServiceOptions>{
       localStorage: true,
     },
   ) {
     this.initialState = initialState;
+    this.options = options;
     if (options.localStorage) {
       this.dispatch(this.getStateInLocalStorage() || this.initialState);
-      this.state$.subscribe(state => this.setStateInLocalStorage(state));
+      this.stateSubscribe = this.state$.subscribe(state => this.setStateInLocalStorage(state));
     } else {
       this.dispatch();
     }
@@ -115,6 +118,7 @@ export abstract class BaseService<State extends BaseState> implements OnDestroy 
   }
 
   ngOnDestroy(): void {
+    this.stateSubscribe.unsubscribe();
     classes = classes.filter(item => this.SERVICE_ID !== item.SERVICE_ID);
     this.onDestroy();
   }
