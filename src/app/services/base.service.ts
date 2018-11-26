@@ -4,7 +4,7 @@ import * as _ from 'lodash';
 import { BehaviorSubject, Observable, Subscription } from 'rxjs';
 import { BaseState } from '../models/base-state.model';
 
-let classes: any[] = [];
+const classes: any[] = [];
 
 export interface BaseServiceOptions {
   localStorage?: boolean;
@@ -32,6 +32,7 @@ export abstract class BaseService<State extends BaseState> implements OnDestroy 
     initialState: State,
     options: BaseServiceOptions = <BaseServiceOptions>{
       localStorage: true,
+      reset: true,
     },
   ) {
     this.initialState = initialState;
@@ -122,7 +123,11 @@ export abstract class BaseService<State extends BaseState> implements OnDestroy 
 
   ngOnDestroy(): void {
     this.stateSubscribe.unsubscribe();
-    classes = classes.filter(item => this.SERVICE_ID !== item.SERVICE_ID);
+    classes.forEach((item, index) => {
+      if (this.SERVICE_ID !== item.SERVICE_ID) {
+        classes.splice(index, 1);
+      }
+    });
     this.onDestroy();
   }
 

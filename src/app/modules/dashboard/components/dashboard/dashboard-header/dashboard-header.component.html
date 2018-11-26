@@ -1,14 +1,14 @@
 <div class="row bg-white m-0 h-100 d-flex justify-content-between">
   <div class="col pl-4 d-flex align-items-center">
-    <i class="menu-button icon-menu d-none d-md-inline-block" (click)="onClickMenuButton(DashboardNavStatus.LEFT)"></i>
-    <i class="menu-button icon-menu d-md-none" (click)="onClickMenuButton(DashboardNavStatus.MOBILE)"></i>
+    <i class="menu-button icon-menu text-danger d-none d-md-inline-block" (click)="onClickMenuButton(DashboardNavStatus.LEFT)"></i>
+    <i class="menu-button icon-menu text-danger d-md-none" (click)="onClickMenuButton(DashboardNavStatus.MOBILE)"></i>
   </div>
   <div class="col d-md-none px-0">
     <ng-container *ngTemplateOutlet="logo"></ng-container>
   </div>
   <div class="col pr-4 d-flex align-items-center justify-content-end">
     <ng-select
-      class="mr-3"
+      class="mr-3 select-dashboard-header"
       [items]="languages"
       bindLabel="localName"
       bindValue="code"
