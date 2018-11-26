@@ -8,7 +8,7 @@ import { AuthGuard } from './guards/auth/auth.guard';
 const routes: Routes = [
   {
     path: '',
-    canActivate: [AuthGuard],
+    canActivate: [ AuthGuard ],
     children: [
       {
         path: '',
@@ -27,7 +27,7 @@ const routes: Routes = [
         component: ForgotPasswordComponent,
       },
     ],
-  }
+  },
 ];
 
 @NgModule({

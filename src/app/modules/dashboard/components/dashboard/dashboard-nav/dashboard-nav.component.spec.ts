@@ -8,9 +8,9 @@ describe('DashboardNavComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ DashboardNavComponent ]
+      declarations: [ DashboardNavComponent ],
     })
-    .compileComponents();
+      .compileComponents();
   }));
 
   beforeEach(() => {

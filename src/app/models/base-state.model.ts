@@ -1,3 +1,3 @@
 export interface BaseState {
-  loading: boolean;
+  loading?: boolean;
 }

@@ -8,6 +8,7 @@ let classes: any[] = [];
 
 export interface BaseServiceOptions {
   localStorage?: boolean;
+  reset: boolean;
 }
 
 export abstract class BaseService<State extends BaseState> implements OnDestroy {
@@ -52,7 +53,9 @@ export abstract class BaseService<State extends BaseState> implements OnDestroy 
 
   static resetAllState() {
     classes.forEach(item => {
-      item.dispatch(item.initialState);
+      if (item.options.reset !== false) {
+        item.dispatch(item.initialState);
+      }
     });
   }
 
@@ -61,7 +64,7 @@ export abstract class BaseService<State extends BaseState> implements OnDestroy 
   }
 
   all<T>(options = { headers: this.headers }): Observable<T[]> {
-    return this.http.get<T[]>(`${ this.path }`, options);
+    return this.http.get<T[]>(`${ this.path }/all`, options);
   }
 
   del<T>(id: string, options = { headers: this.headers }): Observable<T> {

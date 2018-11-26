@@ -2,6 +2,9 @@ import { Component, OnInit } from '@angular/core';
 import { BaseComponent } from '../../../../components/base.component';
 import { BaseService } from '../../../../services/base.service';
 import { AuthService } from '../../../auth/services/auth.service';
+import { Language } from '../../../language/models/language.model';
+import { LanguageState } from '../../../language/models/language.state';
+import { LanguageService } from '../../../language/services/language.service';
 import { DashboardNavStatus } from '../../enums/dashboard-nav-status.enum';
 import { DashboardNav } from '../../models/dashboard-nav.model';
 import { DashboardState } from '../../models/dashboard-state.model';
@@ -19,11 +22,15 @@ export class DashboardComponent implements OnInit, BaseComponent<DashboardState,
   constructor(
     private readonly dashboardService: DashboardService,
     private readonly authService: AuthService,
+    private readonly languageService: LanguageService,
   ) {
   }
 
   ngOnInit() {
     this.getNav();
+    if (!this.languageState().all) {
+      this.languageService.getLanguages().subscribe();
+    }
   }
 
   getNav(): void {
@@ -44,6 +51,10 @@ export class DashboardComponent implements OnInit, BaseComponent<DashboardState,
     }
   }
 
+  onChangeLanguage(language: Language) {
+    this.languageService.onChangeLanguage(language);
+  }
+
   onLogout() {
     this.authService.logout().subscribe(() => {
       this.authService.redirectLogin();
@@ -57,5 +68,9 @@ export class DashboardComponent implements OnInit, BaseComponent<DashboardState,
 
   service(): DashboardService {
     return this.dashboardService;
+  }
+
+  languageState(): LanguageState {
+    return this.languageService.state$.value;
   }
 }

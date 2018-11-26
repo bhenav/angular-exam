@@ -1,6 +1,6 @@
 <div class="row m-0 h-100">
   <div class="p-0 col-12 d-none d-md-block col-md left-side px-3 px-lg-4 bg-white shadow-sm"
-    [ngClass]="{
+       [ngClass]="{
       'open': state().navStatus !== DashboardNavStatus.CLOSE
     }"
   >
@@ -9,9 +9,14 @@
       [navs]="navs"
       (clickNav)="onClickNav($event)" [navStatus]="state().navStatus"></exam-dashboard-nav>
   </div>
-  <div class="p-0 col-12 col-md"
-  >
-    <exam-dashboard-header class="shadow-sm" (logout)="onLogout()" (clickMenuButton)="onClickMenuButton($event)"></exam-dashboard-header>
+  <div class="p-0 col-12 col-md">
+    <exam-dashboard-header
+      (changeLanguage)="onChangeLanguage($event)"
+      [languages]="languageState().all"
+      [currentLanguage]="languageState().currentLanguage"
+      class="shadow-sm"
+      (logout)="onLogout()"
+      (clickMenuButton)="onClickMenuButton($event)"></exam-dashboard-header>
     <div class="content p-3">
       <router-outlet></router-outlet>
     </div>

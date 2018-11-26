@@ -6,8 +6,18 @@
   <div class="col d-md-none px-0">
     <ng-container *ngTemplateOutlet="logo"></ng-container>
   </div>
-  <div class="col pr-4 d-flex align-items-center">
-    <button class="btn btn-danger ml-auto" (click)="onLogout()"><i class="icon-power-off"></i></button>
+  <div class="col pr-4 d-flex align-items-center justify-content-end">
+    <ng-select
+      class="mr-3"
+      [items]="languages"
+      bindLabel="localName"
+      bindValue="code"
+      placeholder="Select value"
+      [ngModel]="currentLanguage"
+      [clearable]="false"
+      (change)="onChangeLanguage($event)">
+    </ng-select>
+    <button class="btn btn-danger" (click)="onLogout()"><i class="icon-power-off"></i></button>
   </div>
 </div>
 
