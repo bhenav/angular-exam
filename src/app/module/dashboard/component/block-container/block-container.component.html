@@ -1,0 +1,9 @@
+<div class="wrapper bg-white p-3 {{ wrapperClasses }}">
+  <div class="head">
+    <div class="title {{ titleClasses }}"><ng-content select=".block-title"></ng-content></div>
+    <div class="description {{ descriptionClasses }}"><ng-content select=".block-description"></ng-content></div>
+  </div>
+  <div>
+    <ng-content></ng-content>
+  </div>
+</div>

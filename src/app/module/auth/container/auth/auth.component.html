@@ -1,0 +1,21 @@
+<div class="container-fluid auth-container h-100">
+  <div class="row h-100 d-flex align-items-center">
+    <div class="col-md-12 col-lg-6 col-xl-3 mx-auto">
+      <div class="auth-content rounded w-100 m-auto p-3 shadow bg-white">
+        <div class="row mb-3">
+          <div [ngClass]="{'d-none': !back, 'col-2': back}">
+            <a class="btn btn-lg p-0" routerLink="/auth/login">
+              <i class="icon-arrow-left text-danger"></i>
+            </a>
+          </div>
+          <div [ngClass]="{'col-12': !back, 'col-8': back}">
+            <a routerLink="/" class="logo">
+              <img src="/assets/angular.svg" alt="Angular Exam" title="Angular Exam">
+            </a>
+          </div>
+        </div>
+        <ng-content></ng-content>
+      </div>
+    </div>
+  </div>
+</div>

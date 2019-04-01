@@ -10,7 +10,7 @@
       "prefix": "exam",
       "schematics": {
         "@schematics/angular:component": {
-          "styleext": "sass"
+          "style": "sass"
         }
       },
       "architect": {
@@ -140,5 +140,5 @@
       }
     }
   },
-  "defaultProject": "angular-exam"
+  "defaultProject": "angularLast01042019"
 }

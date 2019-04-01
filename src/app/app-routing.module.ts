@@ -4,11 +4,11 @@ import { RouterModule, Routes } from '@angular/router';
 const routes: Routes = [
   {
     path: 'auth',
-    loadChildren: './modules/auth/auth.module#AuthModule',
+    loadChildren: './module/auth/auth.module#AuthModule',
   },
   {
     path: 'dashboard',
-    loadChildren: './modules/dashboard/dashboard.module#DashboardModule',
+    loadChildren: './module/dashboard/dashboard.module#DashboardModule',
   },
   {
     path: '',

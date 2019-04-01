@@ -2,11 +2,12 @@ import { HTTP_INTERCEPTORS, HttpClientModule } from '@angular/common/http';
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-
 import { TranslateModule } from '@ngx-translate/core';
+
 import { AppRoutingModule } from './app-routing.module';
-import { AppComponent } from './containers/app.container/app.component';
-import { TokenInterceptor } from './interceptors/token-interceptor';
+import { AppComponent } from './container/app.container/app.component';
+import { HttpErrorInterceptor } from './interceptor/error-interceptor';
+import { TokenInterceptor } from './interceptor/token-interceptor';
 
 @NgModule({
   declarations: [
@@ -23,6 +24,11 @@ import { TokenInterceptor } from './interceptors/token-interceptor';
     {
       provide: HTTP_INTERCEPTORS,
       useClass: TokenInterceptor,
+      multi: true,
+    },
+    {
+      provide: HTTP_INTERCEPTORS,
+      useClass: HttpErrorInterceptor,
       multi: true,
     },
   ],
